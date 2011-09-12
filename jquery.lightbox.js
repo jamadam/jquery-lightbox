@@ -15,6 +15,32 @@
 		// build main options
 		var opts = $.extend({}, $.fn.lightbox.defaults, options);
         
+		var selectorNames = {
+			lightbox: opts.selectorPrefix + 'lightbox',
+			outerImageContainer: opts.selectorPrefix + 'outerImageContainer',
+			imageContainer: opts.selectorPrefix + 'imageContainer',
+			lightboxIframe: opts.selectorPrefix + 'lightboxIframe',
+			lightboxImage: opts.selectorPrefix + 'lightboxImage',
+			hoverNav: opts.selectorPrefix + 'hoverNav',
+			prevLink: opts.selectorPrefix + 'prevLink',
+			nextLink: opts.selectorPrefix + 'nextLink',
+			loading: opts.selectorPrefix + 'loading',
+			loadingLink: opts.selectorPrefix + 'loadingLink',
+			imageDataContainer: opts.selectorPrefix + 'imageDataContainer',
+			clearfix: opts.selectorPrefix + 'clearfix',
+			imageData: opts.selectorPrefix + 'imageData',
+			imageDetails: opts.selectorPrefix + 'imageDetails',
+			caption: opts.selectorPrefix + 'caption',
+			numberDisplay: opts.selectorPrefix + 'numberDisplay',
+			bottomNav: opts.selectorPrefix + 'bottomNav',
+			helpDisplay: opts.selectorPrefix + 'helpDisplay',
+			bottomNavClose: opts.selectorPrefix + 'bottomNavClose',
+			overlay: opts.selectorPrefix + 'overlay',
+			prevLinkText: opts.selectorPrefix + 'prevLinkText',
+			nextLinkText: opts.selectorPrefix + 'nextLinkText',
+			ontop: opts.selectorPrefix + 'ontop'
+		};
+		
 		$(window).resize(resizeOverlayToFitWindow);
 
 		return $(this).live("click",function(){
@@ -30,7 +56,7 @@
 		# You will never call it by itself, to my knowledge.
 		*/
 		function initialize() {
-			$('#overlay, #lightbox').remove();
+			$('#'+selectorNames.overlay+', #'+selectorNames.hoverNav).remove();
 			opts.inprogress = false;
 
 			// if jsonData, build the imageArray from data provided in JSON format
@@ -40,34 +66,34 @@
 				opts.imageArray = parser(opts.jsonData);
 			}
     
-			var outerImage = '<div id="outerImageContainer"><div id="imageContainer"><iframe id="lightboxIframe"></iframe><img id="lightboxImage" /><div id="hoverNav"><a href="javascript://" title="' + opts.strings.prevLinkTitle + '" id="prevLink"></a><a href="javascript://" id="nextLink" title="' + opts.strings.nextLinkTitle + '"></a></div><div id="loading"><a href="javascript://" id="loadingLink"><img src="'+opts.fileLoadingImage+'"></a></div></div></div>';
-			var imageData = '<div id="imageDataContainer" class="clearfix"><div id="imageData"><div id="imageDetails"><span id="caption"></span><span id="numberDisplay"></span></div><div id="bottomNav">';
+			var outerImage = '<div id="'+selectorNames.outerImageContainer+'"><div id="'+selectorNames.imageContainer+'"><iframe id="'+selectorNames.lightboxIframe+'"></iframe><img id="'+selectorNames.lightboxImage+'" /><div id="'+selectorNames.hoverNav+'"><a href="javascript://" title="' + opts.strings.prevLinkTitle + '" id="'+selectorNames.prevLink+'"></a><a href="javascript://" id="'+selectorNames.nextLink+'" title="' + opts.strings.nextLinkTitle + '"></a></div><div id="'+selectorNames.loading+'"><a href="javascript://" id="'+selectorNames.loadingLink+'"><img src="'+opts.fileLoadingImage+'"></a></div></div></div>';
+			var imageData = '<div id="'+selectorNames.imageDataContainer+'" class="'+selectorNames.clearfix+'"><div id="'+selectorNames.imageData+'"><div id="'+selectorNames.imageDetails+'"><span id="'+selectorNames.caption+'"></span><span id="'+selectorNames.numberDisplay+'"></span></div><div id="'+selectorNames.bottomNav+'">';
 
 			if (opts.displayHelp) {
-				imageData += '<span id="helpDisplay">' + opts.strings.help + '</span>';
+				imageData += '<span id="'+selectorNames.helpDisplay+'">' + opts.strings.help + '</span>';
 			}
 
-			imageData += '<a href="javascript://" id="bottomNavClose" title="' + opts.strings.closeTitle + '"><img src="'+opts.fileBottomNavCloseImage+'"></a></div></div></div>';
+			imageData += '<a href="javascript://" id="'+selectorNames.bottomNavClose+'" title="' + opts.strings.closeTitle + '"><img src="'+opts.fileBottomNavCloseImage+'"></a></div></div></div>';
 
 			var string;
 
 			if (opts.navbarOnTop) {
-				string = '<div id="overlay"></div><div id="lightbox">' + imageData + outerImage + '</div>';
+				string = '<div id="'+selectorNames.overlay+'"></div><div id="'+selectorNames.lightbox+'">' + imageData + outerImage + '</div>';
 				$("body").append(string);
-				$("#imageDataContainer").addClass('ontop');
+				$("#'+selectorNames.imageDataContainer+'").addClass(selectorNames.ontop);
 			} else {
-				string = '<div id="overlay"></div><div id="lightbox">' + outerImage + imageData + '</div>';
+				string = '<div id="'+selectorNames.overlay+'"></div><div id="'+selectorNames.lightbox+'">' + outerImage + imageData + '</div>';
 				$("body").append(string);
 			}
 
-			$("#overlay, #lightbox").click(function(){ end(); }).hide();
-			$("#loadingLink, #bottomNavClose").click(function(){ end(); return false;});
-			$('#outerImageContainer').width(opts.widthCurrent).height(opts.heightCurrent);
-			$('#imageDataContainer').width(opts.widthCurrent);
+			$('#'+selectorNames.overlay+', #'+selectorNames.lightbox).click(function(){ end(); }).hide();
+			$('#'+selectorNames.loadingLink+', #'+selectorNames.bottomNavClose).click(function(){ end(); return false;});
+			$('#'+selectorNames.outerImageContainer).width(opts.widthCurrent).height(opts.heightCurrent);
+			$('#'+selectorNames.imageDataContainer).width(opts.widthCurrent);
 
 			if (!opts.imageClickClose) {
-				$("#lightboxImage").click(function(){ return false; });
-				$("#hoverNav").click(function(){ return false; });
+				$('#'+selectorNames.lightboxImage+'').click(function(){ return false; });
+				$('#'+selectorNames.hoverNav).click(function(){ return false; });
 			}
 			
 			return true;
@@ -152,7 +178,7 @@
 
 			// Resize and display the sexy, sexy overlay.
 			resizeOverlayToFitWindow();
-			$("#overlay").hide().css({ opacity : opts.overlayOpacity }).fadeIn();
+			$('#'+selectorNames.overlay).hide().css({ opacity : opts.overlayOpacity }).fadeIn();
 			imageNum = 0;
 
 			// if data is not provided by jsonData parameter
@@ -190,10 +216,10 @@
 			var arrayPageScroll = getPageScroll();
 			var lightboxTop = arrayPageScroll[1] + ($(window).height() / 10);
 			var lightboxLeft = arrayPageScroll[0];
-			$('#lightbox').css({top: lightboxTop+'px', left: lightboxLeft+'px'}).show();
+			$('#'+selectorNames.lightbox).css({top: lightboxTop+'px', left: lightboxLeft+'px'}).show();
 
 			if (!opts.slideNavBar) {
-				$('#imageData').hide();
+				$('#'+selectorNames.imageData).hide();
 			}
 
 			changeImage(imageNum);
@@ -207,13 +233,13 @@
 				opts.activeImage = imageNum;	
 
 				// hide elements during transition
-				$('#loading').show();
-				$('#lightboxImage, #hoverNav, #prevLink, #nextLink').hide();
+				$('#'+selectorNames.loading).show();
+				$('#'+selectorNames.lightboxImage+', #'+selectorNames.hoverNav+', #'+selectorNames.prevLink+', #'+selectorNames.nextLink).hide();
 
 				// delay preloading image until navbar will slide up
 				if (opts.slideNavBar) { 
-					$('#imageDataContainer').hide();
-					$('#imageData').hide();
+					$('#'+selectorNames.imageDataContainer).hide();
+					$('#'+selectorNames.imageData).hide();
 				}
 				doChangeImage();
 			}
@@ -252,7 +278,7 @@
 					}
 				}
 
-				$('#lightboxImage').
+				$('#'+selectorNames.lightboxImage).
 					attr('src', opts.imageArray[opts.activeImage][0]).
 					width(newWidth).
 					height(newHeight);
@@ -265,8 +291,8 @@
 
 		function end() {
 			disableKeyboardNav();
-			$('#lightbox').hide();
-			$('#overlay').fadeOut();
+			$('#'+selectorNames.lightbox).hide();
+			$('#'+selectorNames.overlay).fadeOut();
 			$('select, object, embed').show();
 		};
 
@@ -291,8 +317,8 @@
 
 		function resizeImageContainer(imgWidth, imgHeight) {
 			// get current width and height
-			opts.widthCurrent = $("#outerImageContainer").outerWidth();
-			opts.heightCurrent = $("#outerImageContainer").outerHeight();
+			opts.widthCurrent = $('#'+selectorNames.outerImageContainer).outerWidth();
+			opts.heightCurrent = $('#'+selectorNames.outerImageContainer).outerHeight();
 
 			// get new width and height
 			var widthNew = Math.max(350, imgWidth  + (opts.borderSize * 2));
@@ -302,9 +328,9 @@
 			wDiff = opts.widthCurrent - widthNew;
 			hDiff = opts.heightCurrent - heightNew;
 
-			$('#imageDataContainer').animate({width: widthNew},opts.resizeSpeed,'linear');
-			$('#outerImageContainer').animate({width: widthNew},opts.resizeSpeed,'linear', function() {
-				$('#outerImageContainer').animate({height: heightNew},opts.resizeSpeed,'linear', function() {
+			$('#'+selectorNames.imageDataContainer).animate({width: widthNew},opts.resizeSpeed,'linear');
+			$('#'+selectorNames.outerImageContainer).animate({width: widthNew},opts.resizeSpeed,'linear', function() {
+				$('#'+selectorNames.outerImageContainer).animate({height: heightNew},opts.resizeSpeed,'linear', function() {
 					showImage();
 				});
 			});
@@ -319,13 +345,13 @@
 				}
 			}
 
-			$('#prevLink').height(imgHeight);
-			$('#nextLink').height(imgHeight);
+			$('#'+selectorNames.prevLink).height(imgHeight);
+			$('#'+selectorNames.nextLink).height(imgHeight);
 		};
 
 		function showImage() {
-			$('#loading').hide();
-			$('#lightboxImage').fadeIn("fast");
+			$('#'+selectorNames.loading).hide();
+			$('#'+selectorNames.lightboxImage).fadeIn("fast");
 			updateDetails();
 			preloadNeighborImages();
 
@@ -333,10 +359,10 @@
 		};
 
 		function updateDetails() {
-			$('#numberDisplay').html('');
+			$('#'+selectorNames.numberDisplay).html('');
 
 			if (opts.imageArray[opts.activeImage][1]) {
-				$('#caption').html(opts.imageArray[opts.activeImage][1]).show();
+				$('#'+selectorNames.caption).html(opts.imageArray[opts.activeImage][1]).show();
 			}
 
 			// if image is part of set display 'Image x of x'
@@ -352,21 +378,21 @@
 				if (!opts.disableNavbarLinks) {
 					// display previous / next text links
 					if ((opts.activeImage) > 0 || opts.loopImages) {
-						nav_html = '<a title="' + opts.strings.prevLinkTitle + '" href="#" id="prevLinkText">' + opts.strings.prevLinkText + "</a>" + nav_html;
+						nav_html = '<a title="' + opts.strings.prevLinkTitle + '" href="#" id="'+selectorNames.prevLinkText+'">' + opts.strings.prevLinkText + "</a>" + nav_html;
 					}
 
 					if (((opts.activeImage + 1) < opts.imageArray.length) || opts.loopImages) {
-						nav_html += '<a title="' + opts.strings.nextLinkTitle + '" href="#" id="nextLinkText">' + opts.strings.nextLinkText + "</a>";
+						nav_html += '<a title="' + opts.strings.nextLinkTitle + '" href="#" id="'+selectorNames.nextLinkText+'">' + opts.strings.nextLinkText + "</a>";
 					}
 				}
 
-				$('#numberDisplay').html(nav_html).show();
+				$('#'+selectorNames.numberDisplay).html(nav_html).show();
 			}
 
 			if (opts.slideNavBar) {
-				$("#imageData").slideDown(opts.navBarSlideSpeed);
+				$('#'+selectorNames.imageData).slideDown(opts.navBarSlideSpeed);
 			} else {
-				$("#imageData").show();
+				$('#'+selectorNames.imageData).show();
 			}
 
 			resizeOverlayToFitWindow();
@@ -379,22 +405,22 @@
 		# This should now happen whenever a window is resized, so you should always see a full overlay
 		*/
 		function resizeOverlayToFitWindow(){
-			$('#overlay').css({width: $(document).width(), height: $(document).height()});
+			$('#'+selectorNames.overlay).css({width: $(document).width(), height: $(document).height()});
 			//  ^^^^^^^ <- sexy!
 		};
 
 		function updateNav() {
 			if (opts.imageArray.length > 1) {
-				$('#hoverNav').show();
+				$('#'+selectorNames.hoverNav).show();
 
 				// if loopImages is true, always show next and prev image buttons 
 				if(opts.loopImages) {
-					$('#prevLink,#prevLinkText').show().click(function() {
+					$('#'+selectorNames.prevLink+',#'+selectorNames.prevLinkText).show().click(function() {
 						changeImage((opts.activeImage == 0) ? (opts.imageArray.length - 1) : opts.activeImage - 1); 
 						return false;
 					});
 
-					$('#nextLink,#nextLinkText').show().click(function() {
+					$('#'+selectorNames.nextLink+',#'+selectorNames.nextLinkText).show().click(function() {
 						changeImage((opts.activeImage == (opts.imageArray.length - 1)) ? 0 : opts.activeImage + 1); 
 						return false;
 					});
@@ -402,7 +428,7 @@
 				} else {
 					// if not first image in set, display prev image button
 					if(opts.activeImage != 0) {
-						$('#prevLink,#prevLinkText').show().click(function() {
+						$('#'+selectorNames.prevLink+',#'+selectorNames.prevLinkText).show().click(function() {
 							changeImage(opts.activeImage - 1); 
 							return false;
 						});
@@ -410,7 +436,7 @@
 
 					// if not last image in set, display next image button
 					if(opts.activeImage != (opts.imageArray.length - 1)) {
-						$('#nextLink,#nextLinkText').show().click(function() {
+						$('#'+selectorNames.nextLink+',#'+selectorNames.nextLinkText).show().click(function() {
 							changeImage(opts.activeImage +1); 
 							return false;
 						});
@@ -474,6 +500,7 @@
 	};
 
 	$.fn.lightbox.defaults = {
+		selectorPrefix:'',
 		allSet: false,
 		fileLoadingImage: 'images/loading.gif',
 		fileBottomNavCloseImage: 'images/closelabel.gif',
